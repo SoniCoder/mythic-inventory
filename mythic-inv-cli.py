@@ -27,8 +27,11 @@ if not config:
 world_folder = config.get('world_folder', './world/data')
 
 # if the world_folder doens't exist, create it
-if not os.path.exists(world_folder):
-    os.makedirs(world_folder)
+def ensure_dir_exists(directory):
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+ensure_dir_exists(world_folder)
 
 os.environ.setdefault('ESCDELAY', '1')
 # Initialize curses
@@ -194,8 +197,9 @@ def main(stdscr):
             # selected_idx = 0  # Reset index after each search query update; you can comment this line if you don't want it to reset
 
         elif c == ord("x") and move_mode:
-            # let us consider the item_to_move item as suspense and move it to the ./Suspense folder
-            destination_folder_path = "./Locations/Suspense"
+            # let us consider the item_to_move item as suspense and move it to the ./Suspense folder inside world_folder
+            destination_folder_path = os.path.join(world_folder, 'Suspense')
+            ensure_dir_exists(destination_folder_path)
             logging.debug(f"Destination folder: {destination_folder_path}")
             if os.path.isdir(destination_folder_path):
                 full_dest_path = os.path.join(destination_folder_path, os.path.basename(item_to_move)) 
@@ -298,12 +302,12 @@ def main(stdscr):
 
         elif c == ord("h"):
             stdscr.clear()
-            stdscr.addstr(0, 0, "Help:")
-            stdscr.addstr(1, 0, "Press 'c' to create item")
-            stdscr.addstr(2, 0, "Press 'n' for new location/container")
-            stdscr.addstr(3, 0, "Press 'd' to delete item")
-            stdscr.addstr(4, 0, "Press 'q' to quit")
-            stdscr.addstr(5, 0, "Arrow keys to navigate")
+            stdscr.addstr(0, 0, "'c': create item | 'n' : new location/container")
+            stdscr.addstr(1, 0, "'s': search      | 'd' : delete")
+            stdscr.addstr(2, 0, "'q': quit        | 'esc' : escape to normal mode")
+            stdscr.addstr(3, 0, "'m': move mode   | 'r' : rename")
+            stdscr.addstr(5, 0, "move mode:")
+            stdscr.addstr(6, 0, "m: drop item     | x: move to suspense")
             stdscr.getch()
         elif c == ord("n"):
             curses.echo()
