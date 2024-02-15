@@ -181,7 +181,7 @@ def main(stdscr):
                     offset = 0
                     search_mode = False
                     curses.noecho()
-            elif c == 8 or c == curses.KEY_BACKSPACE:  # Backspace/Delete key
+            elif c == 8 or c == curses.KEY_BACKSPACE or c == 127:  # Backspace/Delete key
                 search_query = search_query[:-1]
                 stdscr.addstr(1, len("Search: ") + len(search_query), " ")
             elif c == curses.KEY_DOWN:
@@ -313,12 +313,6 @@ def main(stdscr):
             # Create a new directory
             new_item_path = os.path.join(current_path, new_item)
             os.makedirs(new_item_path, exist_ok=True)
-
-            # # Create a metadata file within the new directory
-            # metadata_path = os.path.join(new_item_path, '.metadata.md')
-            # with open(metadata_path, 'w') as meta_file:
-            #     meta_file.write("Type: Location/Container\n")
-
             curses.noecho()
 
         elif c == curses.KEY_DOWN:
@@ -373,18 +367,6 @@ def main(stdscr):
                     
             except IndexError:
                 pass
-
-        # instructions = (
-        #     "Press 'c' to create item, 'n' for new location/container, "
-        #     "'d' to delete item, 'q' to quit, Arrow keys to navigate"
-        # )
-        # if max_x < len(instructions):
-        #     instructions = "Press 'h' for help"
-        # try:
-        #     stdscr.addstr(max_y - 1, 0, instructions)
-        # except curses.error:
-        #     pass  # Ignore any errors related to screen size
-
         stdscr.refresh()
 
 curses.wrapper(main)
