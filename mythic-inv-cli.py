@@ -41,7 +41,8 @@ curses.cbreak()
 stdscr.keypad(True)
 curses.start_color()
 curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)  # text in black, bg in white
-curses.set_escdelay(1)
+if os.name == 'posix':
+    curses.set_escdelay(1)
 os.environ.setdefault('ESCDELAY', '1')
 
 def display_content(win, path, selected_idx, offset):

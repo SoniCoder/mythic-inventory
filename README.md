@@ -17,6 +17,22 @@ python mythic-inv-cli.py
 
 The Linux installation is similar to the Android installation except that you don't need to install termux. You can use the terminal to run the commands. Make sure to use apt instead of pkg to install the required packages.
 
+## Windows
+
+Apart from install WSL(Windows Subsystem for Linux) and then following the Linux installation instructions, if you want to run the CLI in Windows, you can use the following instructions:
+
+Windows has another alternative called windows-curses which we need to install manually
+
+```bash
+pip install windows-curses
+```
+
+Apart from this, the installation is similar to the Linux installation.
+
+## MacOS
+
+The MacOS installation is similar to the Linux installation.
+
 ### World Directory
 
 By default the world directory is `./world` inside the directory as the `mythic-inv-cli.py` file. You can change the world directory in the `config.py` file.
