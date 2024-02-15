@@ -33,6 +33,10 @@ Apart from this, the installation is similar to the Linux installation.
 
 The MacOS installation is similar to the Linux installation.
 
+## iOS
+
+You can attempt some termux like clone e.g. iSH app but our recommendation is to use termius to connect to a remote ssh server and run the CLI there.
+
 ### World Directory
 
 By default the world directory is `./world` inside the directory as the `mythic-inv-cli.py` file. You can change the world directory in the `config.py` file.

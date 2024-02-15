@@ -145,7 +145,10 @@ def main(stdscr):
             for idx, path in enumerate(search_results):
                 if idx >= max_y - 2:  # Leave space for instructions and search query
                     break  # Stop if we reach the maximum y dimension
-                display_str = path if len(path) <= max_x else path[:max_x - 3] + "..."
+                # display_str = path if len(path) <= max_x else path[:max_x - 3] + "..."
+                display_str = '/' + path.replace(world_folder, "", 1).lstrip(os.path.sep)
+                if len(display_str) > max_x - 3:
+                    display_str = "..." + display_str[-(max_x - 4):]
                 try:
                     if idx == selected_idx:
                         stdscr.addstr(idx + 2, 1, display_str, curses.color_pair(1))
