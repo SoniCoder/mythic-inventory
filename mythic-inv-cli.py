@@ -24,7 +24,7 @@ with open('config.yml', 'r') as file:
 if not config:
     config = {}
 
-world_folder = config.get('world_folder', './world')
+world_folder = config.get('world_folder', './world/data')
 
 # if the world_folder doens't exist, create it
 if not os.path.exists(world_folder):
