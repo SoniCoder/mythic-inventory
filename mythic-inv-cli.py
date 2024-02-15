@@ -93,7 +93,15 @@ def confirmation_prompt(win):
         win.addstr(1, 0, "> Yes" if selected_option == 0 else "  Yes")
         win.addstr(2, 0, "> No"  if selected_option == 1 else "  No ")
 
-
+class Textbox(curses.textpad.Textbox):
+    def do_command(self, ch):
+        # Handle backspace for Windows and Unix environments
+        if ch in (curses.KEY_BACKSPACE, 127, 8):
+            if self.win.getyx()[1] > 0:  # Ensure cursor is not at the start
+                self.win.delch(self.win.getyx()[0], self.win.getyx()[1]-1)
+            return True
+        else:
+            return super().do_command(ch)
 
 def main(stdscr):
     global item_to_move
@@ -196,6 +204,15 @@ def main(stdscr):
                 search_query += chr(c)
             search_results = search_files(world_folder, search_query)
             # selected_idx = 0  # Reset index after each search query update; you can comment this line if you don't want it to reset
+        elif c == 27:  # Escape key pressed
+            # Add a check to ensure we're not in special modes like search or move mode
+            if not search_mode and not move_mode:
+                # Ensure current_path is not the root of the world folder
+                if current_path != world_folder and os.path.dirname(current_path) >= world_folder:
+                    # Navigate back to the parent directory
+                    current_path = os.path.dirname(current_path)
+                    selected_idx = 0  # Reset selected index
+                    offset = 0  # Reset the offset for scrolling
 
         elif c == ord("x") and move_mode:
             # let us consider the item_to_move item as suspense and move it to the ./Suspense folder inside world_folder
@@ -219,7 +236,7 @@ def main(stdscr):
             if not move_mode:
                 # Activate move mode and store the selected item's full path
                 move_mode = True
-                next_folder = ['..'] + os.listdir(current_path)
+                next_folder = files_and_dirs
                 item_to_move = os.path.join(current_path, next_folder[selected_idx]) if selected_idx < len(next_folder) else None
                 log_str = f"Move mode activated. Selected: {item_to_move}"
                 logging.debug(log_str)
@@ -274,7 +291,7 @@ def main(stdscr):
                     os.remove(selected_item_path)
                 selected_idx = max(selected_idx - 1, 0)
         elif c == ord('r'):  # The user pressed 'r' for renaming
-            next_folder = ['..'] + os.listdir(current_path)  # Add '..' at the top
+            next_folder = files_and_dirs
             if selected_idx == 0:
                 footer = "Cannot rename parent directory!"
                 continue
@@ -288,7 +305,8 @@ def main(stdscr):
             # Create a sub-window and a textbox at the footer location
             textbox_win = curses.newwin(1, 60, max_y - 1, len(footer))
             textbox_win.addstr(0, 0, selected_item)  # Pre-fill with the current name
-            textbox = curses.textpad.Textbox(textbox_win, insert_mode=True)
+            # textbox = curses.textpad.Textbox(textbox_win, insert_mode=True)
+            textbox = Textbox(textbox_win, insert_mode=True)
             curses.curs_set(1)  # Show cursor
             new_name = textbox.edit().strip()  # Capture the edited text
             curses.curs_set(0)  # Hide cursor
@@ -303,7 +321,7 @@ def main(stdscr):
 
         elif c == ord("h"):
             stdscr.clear()
-            stdscr.addstr(0, 0, "'c': create item | 'n' : new location/container")
+            stdscr.addstr(0, 0, "'c': create item | 'n' : new location")
             stdscr.addstr(1, 0, "'s': search      | 'd' : delete")
             stdscr.addstr(2, 0, "'q': quit        | 'esc' : escape to normal mode")
             stdscr.addstr(3, 0, "'m': move mode   | 'r' : rename")
@@ -312,7 +330,7 @@ def main(stdscr):
             stdscr.getch()
         elif c == ord("n"):
             curses.echo()
-            stdscr.addstr(len(os.listdir(current_path)) + 2, 1, "New location/container name: ")
+            stdscr.addstr(len(os.listdir(current_path)) + 2, 1, "New location name: ")
             new_item = stdscr.getstr().decode("utf-8")
 
             # Create a new directory

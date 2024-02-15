@@ -50,3 +50,13 @@ git pull
 ```
 
 - If you find any bugs or issues, please report them in the issues section of the github repository.
+
+### Help Instructions
+
+'c': create item | 'n' : new location
+'s': search      | 'd' : delete
+'q': quit        | 'esc' : escape to normal mode
+'m': move mode   | 'r' : rename
+
+move mode:
+m: drop item     | x: move to suspense
